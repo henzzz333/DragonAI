@@ -58,19 +58,19 @@ export default function Home() {
   return (
     <main className="flex h-screen bg-gray-50">
       <section className="flex flex-1 flex-col">
-        {/* MOBILE / DESKTOP HEADER */}
-        <div className="sticky top-0 z-10 bg-white border-b px-4 py-3">
-          <h1 className="font-semibold">🐉 Dragon AI</h1>
+        {/* HEADER */}
+        <div className="sticky top-0 z-10 bg-white border-b px-4 py-3 rounded-b-2xl">
+          <h1 className="font-semibold text-base">🐉 Dragon AI</h1>
           <p className="text-xs text-gray-500">
-            Academic research assistant
+            Academic & educational assistant
           </p>
         </div>
 
-        {/* CHAT */}
+        {/* CHAT AREA */}
         <div className="flex-1 overflow-y-auto px-4 py-6">
           {messages.length === 0 && (
-            <div className="text-center text-gray-400 mt-24">
-              Ask an academic question to begin
+            <div className="text-center text-gray-400 mt-28">
+              Ask a question to begin
             </div>
           )}
 
@@ -82,7 +82,7 @@ export default function Home() {
               }`}
             >
               <div
-                className={`max-w-[85%] md:max-w-3xl rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                className={`max-w-[85%] md:max-w-3xl px-4 py-3 text-sm leading-relaxed rounded-[22px] ${
                   msg.role === "user"
                     ? "bg-black text-white"
                     : "bg-white border"
@@ -95,7 +95,7 @@ export default function Home() {
 
           {loading && (
             <div className="mb-5 flex justify-start">
-              <div className="bg-white border rounded-2xl px-4 py-3 text-sm text-gray-500">
+              <div className="bg-white border px-4 py-3 text-sm text-gray-500 rounded-[22px]">
                 Thinking…
               </div>
             </div>
@@ -104,15 +104,15 @@ export default function Home() {
           <div ref={bottomRef} />
         </div>
 
-        {/* INPUT BAR */}
+        {/* INPUT BAR (ChatGPT-style) */}
         <div className="sticky bottom-0 bg-white border-t px-3 py-2">
-          <div className="flex gap-2 max-w-4xl mx-auto">
+          <div className="flex gap-2 max-w-4xl mx-auto items-end">
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask an academic question…"
+              placeholder="Ask something…"
               rows={1}
-              className="flex-1 resize-none border rounded-2xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+              className="flex-1 resize-none border rounded-full px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
@@ -124,7 +124,7 @@ export default function Home() {
             <button
               onClick={sendMessage}
               disabled={loading}
-              className="rounded-2xl bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50"
+              className="rounded-full bg-black px-5 py-3 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50"
             >
               Send
             </button>
