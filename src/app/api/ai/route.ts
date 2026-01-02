@@ -1,48 +1,38 @@
 import { NextResponse } from "next/server";
 
-type Mode =
-  | "summarize"
-  | "paraphrase"
-  | "essay"
-  | "study"
-  | "outline"
-  | "quiz"
-  | "flashcards"
-  | "improve"
-  | "research";
-
 export async function POST(req: Request) {
   try {
-    const { input, mode } = await req.json();
+    const { input } = await req.json();
 
-    if (!input || !mode) {
+    if (!input) {
       return NextResponse.json(
-        { error: "Input and mode are required" },
+        { error: "Input is required" },
         { status: 400 }
       );
     }
 
-    const promptMap: Record<Mode, string> = {
-      summarize: `Summarize the following text clearly and concisely using academic language:\n\n${input}`,
+    const systemPrompt = `
+You are Dragon AI, a helpful assistant designed primarily for students and learning.
 
-      paraphrase: `Paraphrase the following text without changing its meaning. Avoid plagiarism:\n\n${input}`,
+Behavior rules:
+- If the user asks an academic, educational, or research-related question, respond in a clear, structured, and academic manner.
+- If the user speaks casually or starts a normal conversation, respond naturally and friendly.
+- Adjust tone automatically based on the user's message.
+- Do NOT force academic tone on casual conversation.
+- Do NOT use slang excessively.
+- Be clear, helpful, and respectful.
+- Do not encourage academic dishonesty.
+- When explaining concepts, prioritize understanding over verbosity.
 
-      essay: `Write a well-structured academic essay with an introduction, body, and conclusion based on the topic below:\n\n${input}`,
+You are allowed to:
+- Explain
+- Summarize
+- Paraphrase
+- Chat casually
+- Give examples
 
-      study: `Explain the following topic in a simple, student-friendly way. Use examples if helpful:\n\n${input}`,
-
-      outline: `Create a clear and logical outline for an academic paper on the following topic:\n\n${input}`,
-
-      quiz: `Create a short quiz (with answers) to help a student study the following topic:\n\n${input}`,
-
-      flashcards: `Create concise study flashcards (question and answer format) for the following topic:\n\n${input}`,
-
-      improve: `Improve the clarity, grammar, and academic tone of the following text:\n\n${input}`,
-
-      research: `Explain the following topic in an academic research style. Include key concepts and definitions:\n\n${input}`,
-    };
-
-    const prompt = promptMap[mode as Mode];
+User message:
+`;
 
     const response = await fetch(
       "https://openrouter.ai/api/v1/chat/completions",
@@ -54,16 +44,33 @@ export async function POST(req: Request) {
         },
         body: JSON.stringify({
           model: "openai/gpt-4o-mini",
-          messages: [{ role: "user", content: prompt }],
+          messages: [
+            {
+              role: "system",
+              content: systemPrompt,
+            },
+            {
+              role: "user",
+              content: input,
+            },
+          ],
         }),
       }
     );
 
     const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content ?? "No response";
+
+    if (!data.choices) {
+      return NextResponse.json(
+        { error: data.error?.message || "AI service error" },
+        { status: 500 }
+      );
+    }
+
+    const reply = data.choices[0].message.content;
 
     return NextResponse.json({ reply });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
