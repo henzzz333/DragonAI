@@ -34,11 +34,7 @@ export default function Home() {
   async function sendMessage() {
     if (!input.trim() || loading) return;
 
-    const userMessage: Message = {
-      role: "user",
-      content: input,
-    };
-
+    const userMessage: Message = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
@@ -55,12 +51,13 @@ export default function Home() {
 
       const data = await res.json();
 
-      const aiMessage: Message = {
-        role: "assistant",
-        content: data.reply || "No response.",
-      };
-
-      setMessages((prev) => [...prev, aiMessage]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: data.reply || "No response.",
+        },
+      ]);
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -76,7 +73,7 @@ export default function Home() {
 
   return (
     <main className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
+      {/* DESKTOP SIDEBAR */}
       <aside className="hidden md:flex w-64 flex-col border-r bg-white p-4">
         <h1 className="text-xl font-bold mb-4">🐉 Dragon AI</h1>
 
@@ -98,9 +95,24 @@ export default function Home() {
         </p>
       </aside>
 
-      {/* Chat Area */}
+      {/* CHAT AREA */}
       <section className="flex flex-1 flex-col">
-        {/* Messages */}
+        {/* MOBILE MODE SELECTOR */}
+        <div className="md:hidden border-b bg-white p-3">
+          <select
+            value={mode}
+            onChange={(e) => setMode(e.target.value)}
+            className="w-full border rounded-lg px-3 py-2 text-sm"
+          >
+            {MODES.map((m) => (
+              <option key={m.value} value={m.value}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* MESSAGES */}
         <div className="flex-1 overflow-y-auto px-4 py-6">
           {messages.length === 0 && (
             <div className="text-center text-gray-400 mt-20">
@@ -138,7 +150,7 @@ export default function Home() {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input */}
+        {/* INPUT */}
         <div className="border-t bg-white p-4">
           <div className="max-w-4xl mx-auto flex gap-2">
             <textarea
