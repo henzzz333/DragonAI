@@ -97,12 +97,13 @@ export default function Home() {
 
       {/* CHAT AREA */}
       <section className="flex flex-1 flex-col">
-        {/* MOBILE MODE SELECTOR */}
-        <div className="md:hidden border-b bg-white p-3">
+        {/* MOBILE HEADER (ChatGPT-style) */}
+        <div className="md:hidden sticky top-0 z-10 bg-white border-b px-4 py-3 flex items-center gap-3">
+          <span className="font-semibold">🐉 Dragon AI</span>
           <select
             value={mode}
             onChange={(e) => setMode(e.target.value)}
-            className="w-full border rounded-lg px-3 py-2 text-sm"
+            className="ml-auto border rounded-lg px-2 py-1 text-sm"
           >
             {MODES.map((m) => (
               <option key={m.value} value={m.value}>
@@ -113,9 +114,9 @@ export default function Home() {
         </div>
 
         {/* MESSAGES */}
-        <div className="flex-1 overflow-y-auto px-4 py-6">
+        <div className="flex-1 overflow-y-auto px-4 py-6 md:py-8">
           {messages.length === 0 && (
-            <div className="text-center text-gray-400 mt-20">
+            <div className="text-center text-gray-400 mt-24">
               Ask Dragon AI something academic 🐉
             </div>
           )}
@@ -123,12 +124,12 @@ export default function Home() {
           {messages.map((msg, i) => (
             <div
               key={i}
-              className={`mb-6 flex ${
+              className={`mb-5 flex ${
                 msg.role === "user" ? "justify-end" : "justify-start"
               }`}
             >
               <div
-                className={`max-w-3xl rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                className={`max-w-[85%] md:max-w-3xl rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                   msg.role === "user"
                     ? "bg-black text-white"
                     : "bg-white border"
@@ -140,7 +141,7 @@ export default function Home() {
           ))}
 
           {loading && (
-            <div className="mb-6 flex justify-start">
+            <div className="mb-5 flex justify-start">
               <div className="bg-white border rounded-2xl px-4 py-3 text-sm text-gray-500">
                 Dragon AI is thinking…
               </div>
@@ -150,15 +151,15 @@ export default function Home() {
           <div ref={bottomRef} />
         </div>
 
-        {/* INPUT */}
-        <div className="border-t bg-white p-4">
-          <div className="max-w-4xl mx-auto flex gap-2">
+        {/* MOBILE INPUT (ChatGPT-style bottom bar) */}
+        <div className="sticky bottom-0 bg-white border-t px-3 py-2">
+          <div className="flex items-end gap-2 max-w-4xl mx-auto">
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Send a message…"
+              placeholder="Send a message"
               rows={1}
-              className="flex-1 resize-none border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+              className="flex-1 resize-none border rounded-2xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
@@ -170,7 +171,7 @@ export default function Home() {
             <button
               onClick={sendMessage}
               disabled={loading}
-              className="rounded-xl bg-black px-5 py-3 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50"
+              className="rounded-2xl bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50"
             >
               Send
             </button>
