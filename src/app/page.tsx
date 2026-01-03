@@ -7,6 +7,12 @@ type Message = {
   content: string;
 };
 
+declare global {
+  interface Window {
+    puter: any;
+  }
+}
+
 export default function Home() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -21,33 +27,60 @@ export default function Home() {
   async function sendMessage() {
     if (!input.trim() || loading) return;
 
-    const userMessage: Message = { role: "user", content: input };
-    setMessages((prev) => [...prev, userMessage]);
+    // Ensure Puter is ready
+    if (typeof window === "undefined" || !window.puter?.ai) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "AI is still initializing. Please refresh the page.",
+        },
+      ]);
+      return;
+    }
+
+    const userText = input;
     setInput("");
+    setMessages((prev) => [...prev, { role: "user", content: userText }]);
     setLoading(true);
 
     try {
-      const res = await fetch("/api/ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ input: userMessage.content }),
-      });
+      const prompt = `
+You are Dragon AI, a student-focused assistant.
 
-      const data = await res.json();
+Rules:
+- Respond academically for educational or research questions.
+- Respond casually for normal conversation.
+- If games are mentioned, only suggest educational or learning-focused games.
+- Do not suggest violent or entertainment-only games.
+- Be clear, respectful, and helpful.
+
+User message:
+${userText}
+`;
+
+      // ✅ STABLE PUTER CALL (STRING ONLY)
+      const response = await window.puter.ai.chat(prompt);
+
+      const reply =
+        typeof response === "string"
+          ? response
+          : response?.message?.content ||
+            response?.content ||
+            response?.text ||
+            "No response received.";
 
       setMessages((prev) => [
         ...prev,
-        {
-          role: "assistant",
-          content: data.reply || "No response.",
-        },
+        { role: "assistant", content: reply },
       ]);
-    } catch {
+    } catch (err) {
+      console.error("Puter AI error:", err);
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: "Something went wrong. Please try again.",
+          content: "AI service error. Please try again.",
         },
       ]);
     } finally {
@@ -69,7 +102,7 @@ export default function Home() {
           </p>
         </div>
 
-        {/* CHAT AREA */}
+        {/* CHAT */}
         <div className="flex-1 overflow-y-auto px-4 py-6">
           {messages.length === 0 && (
             <div className="text-center text-gray-400 mt-28">
@@ -107,7 +140,7 @@ export default function Home() {
           <div ref={bottomRef} />
         </div>
 
-        {/* INPUT BAR */}
+        {/* INPUT */}
         <div className="sticky bottom-0 bg-white border-t px-3 py-2">
           <div className="flex gap-2 max-w-4xl mx-auto items-end">
             <textarea

@@ -19,7 +19,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={openSans.variable}>
-      <body className="font-sans">{children}</body>
+      <head>
+        {/* Puter.js Browser SDK (client-side only) */}
+        <script src="https://js.puter.com/v2/"></script>
+      </head>
+      <body className="font-sans bg-white text-black">
+        {children}
+      </body>
     </html>
   );
 }
