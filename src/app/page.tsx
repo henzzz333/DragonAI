@@ -64,6 +64,9 @@ export default function Home() {
           <p className="text-xs text-gray-500">
             Academic & educational assistant
           </p>
+          <p className="text-[11px] text-gray-400 mt-1">
+            Intended for research and educational purposes only.
+          </p>
         </div>
 
         {/* CHAT AREA */}
@@ -104,7 +107,7 @@ export default function Home() {
           <div ref={bottomRef} />
         </div>
 
-        {/* INPUT BAR (ChatGPT-style) */}
+        {/* INPUT BAR */}
         <div className="sticky bottom-0 bg-white border-t px-3 py-2">
           <div className="flex gap-2 max-w-4xl mx-auto items-end">
             <textarea
