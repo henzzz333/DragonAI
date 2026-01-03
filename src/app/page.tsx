@@ -91,7 +91,7 @@ ${userText}
       <section className="flex flex-1 flex-col">
         {/* HEADER */}
         <div className="sticky top-0 z-10 bg-white border-b px-4 py-3 rounded-b-2xl">
-          <h1 className="font-semibold text-base">🐉 Dragon AI</h1>
+          <h1 className="font-semibold text-base">Dragon AI</h1>
           <p className="text-xs text-gray-500">
             Academic & educational assistant
           </p>
